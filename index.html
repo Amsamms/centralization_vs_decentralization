@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<!-- Visualization & Content Choices:
+    - Introduction: Text block. Goal: Inform. Justification: Standard.
+    - Concepts: Text blocks with Unicode icons (🏛️, 🌐). Goal: Define. Interaction: None. Justification: Clear presentation.
+    - Comparison:
+        - Pros/Cons: Two-column text layout. Goal: Compare. Justification: Direct comparison.
+        - Radar Chart (Chart.js): Visualizes Centralization vs. Decentralization on key dimensions (e.g., Decision Speed, Cost, Innovation). Goal: Compare visually. Interaction: Tooltips. Justification: Quick summary. Data abstracted from report.
+        - Table: HTML/Tailwind styled table. Goal: Detailed comparison. Justification: Comprehensive.
+    - Successful Examples: Filterable cards (HTML/Tailwind) for States/Institutions, Centralized/Decentralized. Goal: Illustrate. Interaction: Click to filter. Justification: Organized exploration.
+    - Optimal Choice: Interactive cards/list for factors, text for hybrid models. Goal: Guide. Interaction: Hover effects. Justification: Prominent factors.
+    - Conclusion: Text block. Goal: Summarize. Justification: Standard.
+    - Libraries: Chart.js. All else: HTML/Tailwind/JS.
+-->
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المركزية واللامركزية في الإدارة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #fdfbf6; /* Warm neutral background */
+            color: #333;
+        }
+        .nav-link {
+            @apply px-4 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-300;
+        }
+        .section-title {
+            @apply text-3xl font-bold text-center mb-8 text-blue-800;
+        }
+        .card {
+            @apply bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300;
+        }
+        .tab-button {
+            @apply px-6 py-2 text-sm font-medium rounded-lg transition-all duration-300 focus:outline-none;
+        }
+        .tab-button.active {
+            @apply bg-blue-600 text-white shadow-md;
+        }
+        .tab-button:not(.active) {
+            @apply bg-gray-200 text-gray-700 hover:bg-gray-300;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* max-w-2xl */
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px; /* h-80 */
+            max-height: 400px; /* max-h-96 */
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .chart-container {
+                height: 400px; /* h-96 */
+            }
+        }
+        .tooltip {
+            @apply absolute bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-lg z-10 transition-opacity duration-200;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex flex-wrap justify-between items-center">
+            <div class="text-2xl font-bold text-blue-700">📊 المركزية واللامركزية</div>
+            <button id="nav-toggle" class="md:hidden text-gray-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+            <div id="nav-menu" class="w-full md:w-auto md:flex hidden mt-4 md:mt-0">
+                <a href="#home" class="nav-link block md:inline-block">الرئيسية</a>
+                <a href="#concepts" class="nav-link block md:inline-block">المفاهيم</a>
+                <a href="#comparison" class="nav-link block md:inline-block">مقارنة</a>
+                <a href="#examples" class="nav-link block md:inline-block">أمثلة ناجحة</a>
+                <a href="#optimal-choice" class="nav-link block md:inline-block">الاختيار الأمثل</a>
+                <a href="#conclusion" class="nav-link block md:inline-block">الخاتمة</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+
+        <section id="home" class="py-12 text-center">
+            <h1 class="text-4xl font-bold mb-6 text-blue-700">استكشف المركزية واللامركزية في الإدارة</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                مرحباً بك في هذا التطبيق التفاعلي الذي يهدف إلى تبسيط وشرح مفاهيم المركزية واللامركزية الإدارية. سنستعرض معاً التعريفات، المزايا والعيوب، أمثلة واقعية، والعوامل المؤثرة في اختيار النظام الأنسب للمؤسسات والدول.
+                هذا التطبيق يقدم نظرة عامة مستمدة من التقرير الشامل حول "المركزية واللامركزية في الإدارة"، مع التركيز على تسهيل فهمك للموضوع من خلال تصميم تفاعلي ومنظم.
+            </p>
+        </section>
+
+        <section id="concepts" class="py-12 bg-slate-50 rounded-lg my-8">
+            <h2 class="section-title">📜 الإطار المفاهيمي</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+                لفهم الفروق الجوهرية بين المركزية واللامركزية، لا بد من تحديد مفهوم كل منهما بدقة واستعراض الخصائص والمبادئ الأساسية التي يقوم عليها كل نظام. هذا القسم يقدم تعريفات ومبادئ أساسية لكلا النظامين الإداريين.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card">
+                    <h3 class="text-2xl font-semibold mb-4 text-blue-600 flex items-center">🏛️ المركزية الإدارية</h3>
+                    <p class="mb-3"><strong class="text-gray-700">التعريف:</strong> حصر صلاحيات القرار وتجميعها في يد سلطة واحدة رئيسية، تنفرد بالبت في جميع الاختصاصات.</p>
+                    <p class="mb-3"><strong class="text-gray-700">الخصائص:</strong> تركيز سلطة اتخاذ القرار في القمة، تسلسل هرمي واضح، رقابة مشددة ومباشرة.</p>
+                    <div>
+                        <h4 class="text-lg font-semibold mt-4 mb-2 text-gray-800">المبادئ الأساسية:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-600">
+                            <li>وحدة الأمر: كل موظف يتلقى الأوامر من رئيس واحد.</li>
+                            <li>التدرج الهرمي: السلطة تتدرج من الأعلى للأدنى.</li>
+                            <li>الرقابة الشاملة: قدرة الإدارة العليا على الإشراف والتحكم.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="text-2xl font-semibold mb-4 text-green-600 flex items-center">🌐 اللامركزية الإدارية</h3>
+                    <p class="mb-3"><strong class="text-gray-700">التعريف:</strong> توزيع صلاحيات صنع القرارات بين عدة مستويات إدارية مع خضوعها لرقابة السلطة المركزية.</p>
+                    <p class="mb-3"><strong class="text-gray-700">الخصائص:</strong> تفويض السلطة للمستويات الأدنى، تشجيع المشاركة الواسعة في صنع القرار.</p>
+                     <div>
+                        <h4 class="text-lg font-semibold mt-4 mb-2 text-gray-800">المبادئ الأساسية:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-600">
+                            <li>مبدأ التفريع: السلطة تُمارس على أدنى مستوى فعال.</li>
+                            <li>تفويض السلطة: نقل صلاحيات اتخاذ القرار للمستويات الأدنى.</li>
+                            <li>المشاركة في صنع القرار: إشراك عدد أكبر من الأفراد.</li>
+                            <li>الاستقلالية النسبية: منح الوحدات درجة من الحرية والمرونة.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="py-12">
+            <h2 class="section-title">⚖️ تحليل مقارن</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+               يقدم هذا القسم مقارنة تحليلية لمزايا وعيوب كل من المركزية واللامركزية. يتضمن ذلك عرضًا للمزايا والعيوب، ورسمًا بيانيًا يوضح الفروقات الرئيسية، وجدولًا مقارنًا شاملاً. الهدف هو توفير فهم أعمق لكيفية تأثير كل نظام على الأداء التنظيمي.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-blue-600">👍 مزايا المركزية</h3>
+                    <ul class="list-disc list-inside space-y-1 text-gray-600 bg-white p-4 rounded-lg shadow">
+                        <li>توحيد السياسات والإجراءات</li>
+                        <li>سهولة الرقابة والإشراف</li>
+                        <li>قرارات استراتيجية متماسكة</li>
+                        <li>تقليل ازدواجية الجهود والنفقات</li>
+                    </ul>
+                    <h3 class="text-xl font-semibold mb-3 mt-6 text-red-600">👎 عيوب المركزية</h3>
+                    <ul class="list-disc list-inside space-y-1 text-gray-600 bg-white p-4 rounded-lg shadow">
+                        <li>البطء في اتخاذ القرارات</li>
+                        <li>إرهاق الإدارة العليا بالتفاصيل</li>
+                        <li>خفض الروح المعنوية للموظفين</li>
+                        <li>غياب المرونة وصعوبة التكيف</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-green-600">👍 مزايا اللامركزية</h3>
+                    <ul class="list-disc list-inside space-y-1 text-gray-600 bg-white p-4 rounded-lg shadow">
+                        <li>سرعة اتخاذ القرارات وحل المشكلات</li>
+                        <li>تخفيف العبء عن الإدارة العليا</li>
+                        <li>زيادة الدافعية والروح المعنوية</li>
+                        <li>تنمية المهارات القيادية</li>
+                        <li>مرونة أكبر في التكيف</li>
+                    </ul>
+                    <h3 class="text-xl font-semibold mb-3 mt-6 text-orange-600">👎 عيوب اللامركزية</h3>
+                    <ul class="list-disc list-inside space-y-1 text-gray-600 bg-white p-4 rounded-lg shadow">
+                        <li>صعوبة التنسيق بين الوحدات</li>
+                        <li>ازدواجية في بعض الوظائف وزيادة التكاليف</li>
+                        <li>ضعف الرقابة المركزية</li>
+                        <li>احتمال إساءة استخدام السلطة محليًا</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-semibold text-center my-8 text-gray-800">مقارنة مرئية للخصائص الرئيسية</h3>
+            <div class="chart-container bg-white p-4 rounded-lg shadow-lg">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+            <p class="text-center text-sm text-gray-500 mt-2">الرسم البياني يمثل تقييمًا توضيحيًا لمدى قوة كل نظام في الأبعاد المختلفة.</p>
+
+
+            <h3 class="text-2xl font-semibold text-center my-10 text-gray-800">جدول مقارن تفصيلي</h3>
+            <div class="overflow-x-auto bg-white p-2 rounded-lg shadow-lg">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وجه المقارنة</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإدارة المركزية</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإدارة اللامركزية</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                        <tr><td class="px-6 py-4 whitespace-nowrap font-medium">مركز اتخاذ القرار</td><td class="px-6 py-4">المستويات العليا/المركز</td><td class="px-6 py-4">موزع بين عدة مستويات</td></tr>
+                        <tr><td class="px-6 py-4 whitespace-nowrap font-medium">سرعة اتخاذ القرار</td><td class="px-6 py-4">بطيئة نسبيًا</td><td class="px-6 py-4">سريعة نسبيًا</td></tr>
+                        <tr><td class="px-6 py-4 whitespace-nowrap font-medium">الرقابة</td><td class="px-6 py-4">مشددة ومباشرة</td><td class="px-6 py-4">أقل مباشرة</td></tr>
+                        <tr><td class="px-6 py-4 whitespace-nowrap font-medium">التنسيق</td><td class="px-6 py-4">أسهل</td><td class="px-6 py-4">قد يكون أصعب</td></tr>
+                        <tr><td class="px-6 py-4 whitespace-nowrap font-medium">توحيد السياسات</td><td class="px-6 py-4">عالٍ جدًا</td><td class="px-6 py-4">أقل</td></tr>
+                        <tr><td class="px-6 py-4 whitespace-nowrap font-medium">الابتكار والمرونة</td><td class="px-6 py-4">أقل</td><td class="px-6 py-4">أعلى</td></tr>
+                        <tr><td class="px-6 py-4 whitespace-nowrap font-medium">معنويات الموظفين</td><td class="px-6 py-4">قد تكون منخفضة</td><td class="px-6 py-4">قد تكون عالية</td></tr>
+                        <tr><td class="px-6 py-4 whitespace-nowrap font-medium">تطوير القادة</td><td class="px-6 py-4">محدود في المستويات الدنيا</td><td class="px-6 py-4">أكبر</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="examples" class="py-12 bg-slate-50 rounded-lg my-8">
+            <h2 class="section-title">🌍 أمثلة ناجحة</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+                يستعرض هذا القسم نماذج تطبيقية من الواقع لفهم أعمق لكيفية عمل كل من النظامين المركزي واللامركزي في سياقات مختلفة، سواء على مستوى الدول أو المؤسسات. يمكنك التصفية لعرض الأمثلة حسب النوع (دول/مؤسسات) والنظام المطبق (مركزي/لامركزي).
+            </p>
+            <div class="flex justify-center space-x-4 mb-8 rtl:space-x-reverse" id="exampleTypeFilters">
+                <button class="tab-button active" data-filter-type="type" data-filter-value="all">الكل</button>
+                <button class="tab-button" data-filter-type="type" data-filter-value="state">دول</button>
+                <button class="tab-button" data-filter-type="type" data-filter-value="institution">مؤسسات</button>
+            </div>
+            <div class="flex justify-center space-x-4 mb-8 rtl:space-x-reverse" id="exampleSystemFilters">
+                 <button class="tab-button active" data-filter-type="system" data-filter-value="all">كلا النظامين</button>
+                <button class="tab-button" data-filter-type="system" data-filter-value="centralized">مركزية</button>
+                <button class="tab-button" data-filter-type="system" data-filter-value="decentralized">لامركزية</button>
+            </div>
+
+            <div id="examplesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+        </section>
+
+        <section id="optimal-choice" class="py-12">
+            <h2 class="section-title">💡 نحو الاختيار الأمثل</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+                إن تحديد النظام الأنجح بشكل عام هو سؤال معقد. يعتمد الاختيار الأمثل على مجموعة من العوامل السياقية. هذا القسم يناقش هذه العوامل، فكرة "النظام الأنجح"، والاتجاه نحو النماذج الهجينة التي تسعى لتحقيق توازن بين النظامين.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">🧩 العوامل المؤثرة في الاختيار:</h3>
+                    <ul class="list-none space-y-3">
+                        <li class="flex items-start p-3 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors">
+                            <span class="text-blue-500 text-xl mr-3 rtl:ml-3 rtl:mr-0">📏</span>
+                            <div><strong>حجم المنظمة/الدولة:</strong> الكيانات الكبيرة قد تميل للامركزية لتجنب البطء.</div>
+                        </li>
+                        <li class="flex items-start p-3 bg-green-50 rounded-md hover:bg-green-100 transition-colors">
+                            <span class="text-green-500 text-xl mr-3 rtl:ml-3 rtl:mr-0">🛠️</span>
+                            <div><strong>طبيعة النشاط:</strong> المهام الروتينية تناسب المركزية، والإبداعية تناسب اللامركزية.</div>
+                        </li>
+                        <li class="flex items-start p-3 bg-yellow-50 rounded-md hover:bg-yellow-100 transition-colors">
+                             <span class="text-yellow-500 text-xl mr-3 rtl:ml-3 rtl:mr-0">🤝</span>
+                            <div><strong>الثقافة السائدة:</strong> الثقافات المشارِكة تفضل اللامركزية، والهرمية تفضل المركزية.</div>
+                        </li>
+                         <li class="flex items-start p-3 bg-purple-50 rounded-md hover:bg-purple-100 transition-colors">
+                             <span class="text-purple-500 text-xl mr-3 rtl:ml-3 rtl:mr-0">🌟</span>
+                            <div><strong>توفر الكفاءات:</strong> اللامركزية تتطلب كفاءات قيادية في المستويات الأدنى.</div>
+                        </li>
+                        <li class="flex items-start p-3 bg-red-50 rounded-md hover:bg-red-100 transition-colors">
+                             <span class="text-red-500 text-xl mr-3 rtl:ml-3 rtl:mr-0">🌪️</span>
+                            <div><strong>البيئة الخارجية:</strong> البيئات المتغيرة تتطلب مرونة اللامركزية.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">🎯 فكرة "النظام الأنجح" والنماذج الهجينة:</h3>
+                    <p class="mb-4 text-gray-600">لا يوجد نظام واحد "أنجح" بشكل مطلق. النجاح يعتمد على التوافق مع السياق. المركزية قد تنجح في الأزمات، واللامركزية في تعزيز التنمية المحلية والابتكار.</p>
+                    <p class="text-gray-600">الاتجاه الحديث هو نحو <strong class="text-indigo-600">النماذج الهجينة</strong> التي تمزج بين مزايا كلا النظامين، مركزية بعض الوظائف (كالاستراتيجية العامة) ولامركزية أخرى (كالعمليات اليومية وخدمة العملاء المحلية).</p>
+                    <p class="mt-4 text-gray-600">التحدي يكمن في تصميم المزيج الأمثل والحفاظ على توازن ديناميكي يتكيف مع التغيرات.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusion" class="py-12 bg-blue-700 text-white rounded-lg my-8">
+            <h2 class="section-title !text-white">🏁 الخاتمة</h2>
+            <div class="max-w-3xl mx-auto text-center">
+                <p class="mb-4">
+                    يمثل الاختيار بين المركزية واللامركزية تحديًا جوهريًا. لكل نظام مزاياه وعيوبه، ولا يوجد حل واحد يناسب الجميع. النجاح يكمن في المواءمة الاستراتيجية بين الهيكل الإداري والسياق التشغيلي.
+                </p>
+                <p class="mb-4">
+                    الاتجاه الحديث يميل نحو النماذج الهجينة والمرنة. التطور التكنولوجي سيستمر في التأثير على تصميم النظم الإدارية.
+                </p>
+                <p>
+                    التحدي المستقبلي هو بناء "القدرة التنظيمية على التكيف" لمواجهة التغيرات السريعة، مع دور حاسم للقيادة في تحديد وتطبيق النظام المناسب وإدارة التحول بحكمة.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center py-6 mt-12">
+        <p>&copy; <span id="currentYear"></span> تطبيق المركزية واللامركزية. مستوحى من تقرير بحثي.</p>
+    </footer>
+
+    <script>
+        // Navigation toggle for mobile
+        const navToggle = document.getElementById('nav-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    if (navMenu && navMenu.classList.contains('md:flex') && !navMenu.classList.contains('hidden') && window.innerWidth < 768) {
+                         navMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Comparison Chart (Radar Chart)
+        const ctx = document.getElementById('comparisonChart')?.getContext('2d');
+        if (ctx) {
+            // Data is illustrative, representing general tendencies from the report
+            const comparisonData = {
+                labels: ['سرعة القرار', 'التكلفة الأولية', 'الابتكار', 'المرونة', 'معنويات الموظفين', 'سهولة الرقابة', 'توحيد السياسات'],
+                datasets: [
+                    {
+                        label: 'المركزية',
+                        data: [3, 7, 3, 2, 4, 9, 9], // Scores out of 10 (illustrative)
+                        borderColor: 'rgba(59, 130, 246, 1)', // blue-500
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(59, 130, 246, 1)'
+                    },
+                    {
+                        label: 'اللامركزية',
+                        data: [8, 5, 8, 9, 8, 4, 3], // Scores out of 10 (illustrative)
+                        borderColor: 'rgba(16, 185, 129, 1)', // green-500
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(16, 185, 129, 1)'
+                    }
+                ]
+            };
+            new Chart(ctx, {
+                type: 'radar',
+                data: comparisonData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: {
+                                stepSize: 2,
+                                backdropColor: 'rgba(255, 255, 255, 0.75)', // for better readability
+                                color: '#4A5568' // gray-700
+                            },
+                            pointLabels: {
+                                font: { size: 11, family: 'Cairo' },
+                                color: '#2D3748' // gray-800
+                            },
+                            grid: { color: '#E2E8F0' } // gray-300
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { size: 12, family: 'Cairo' }, color: '#1F2937' } // gray-900
+                        },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false,
+                            titleFont: { family: 'Cairo', weight: 'bold' },
+                            bodyFont: { family: 'Cairo' },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.r !== null) {
+                                        label += context.parsed.r;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    elements: {
+                        line: { borderWidth: 2 }
+                    }
+                }
+            });
+        }
+
+        // Examples Data
+        const examplesData = [
+            { name: 'فرنسا (تاريخيًا)', type: 'state', system: 'centralized', description: 'دور محوري للمركزية في بناء الدولة الحديثة وتوحيد الإدارة.', icon: '🇫🇷' },
+            { name: 'الصين', type: 'state', system: 'centralized', description: 'مركزية في توجيه الاقتصاد الوطني وتنفيذ السياسات التنموية الشاملة.', icon: '🇨🇳' },
+            { name: 'مصر (تاريخيًا)', type: 'state', system: 'centralized', description: 'سيطرة مباشرة للحكومة المركزية على شؤون البلاد وتنفيذ مشاريع وطنية كبرى.', icon: '🇪🇬' },
+            { name: 'ماكدونالدز', type: 'institution', system: 'centralized', description: 'مركزية في القرارات الاستراتيجية، توحيد العمليات، وإدارة العلامة التجارية عالميًا.', icon: '🍔' },
+            { name: 'أمازون (جوانب)', type: 'institution', system: 'centralized', description: 'مركزية في جمع وتحليل بيانات العملاء وتوحيد تجربة المستخدم ووضع الاستراتيجية العامة.', icon: '📦' },
+            { name: 'أبل', type: 'institution', system: 'centralized', description: 'صنع قرار مركزي للغاية في تصميم المنتجات واستراتيجيات التسويق.', icon: '🍏' },
+            { name: 'سويسرا', type: 'state', system: 'decentralized', description: 'نظام فيدرالي يمنح الكانتونات استقلالية عالية في إدارة الشؤون المحلية.', icon: '🇨🇭' },
+            { name: 'ألمانيا', type: 'state', system: 'decentralized', description: 'نظام فيدرالي يمنح الولايات (Länder) استقلالية كبيرة مع الحفاظ على التماسك الوطني.', icon: '🇩🇪' },
+            { name: 'الهند (ولاية كيرالا)', type: 'state', system: 'decentralized', description: 'نموذج ناجح لتوطين أهداف التنمية المستدامة عبر الحكم اللامركزي القوي.', icon: '🇮🇳' },
+            { name: 'الولايات المتحدة', type: 'state', system: 'decentralized', description: 'نظام فيدرالي كلاسيكي مع تقسيم واضح للسلطات بين الحكومة الفيدرالية والولايات.', icon: '🇺🇸' },
+            { name: 'كولومبيا', type: 'state', system: 'decentralized', description: 'دولة وحدوية تبنت اللامركزية الإدارية بشكل كبير استجابة لعدم كفاءة الإدارة المركزية.', icon: '🇨🇴' },
+            { name: 'تويوتا (نظام TPS)', type: 'institution', system: 'decentralized', description: 'لامركزية في اتخاذ القرارات التشغيلية اليومية مع معايير جودة مركزية صارمة (كايزن).', icon: '🚗' },
+            { name: 'جوجل (الابتكار)', type: 'institution', system: 'decentralized', description: 'سياسة "20% وقت حر" (سابقًا) سمحت للموظفين بتطوير مشاريع جانبية بشكل لامركزي.', icon: '🇬' },
+            { name: 'نايكي', type: 'institution', system: 'decentralized', description: 'هيكل تنظيمي يميل للامركزية لتمكين الموظفين والاستجابة السريعة لتغيرات السوق.', icon: '👟' },
+            { name: 'نتفليكس (ثقافة)', type: 'institution', system: 'decentralized', description: 'ثقافة "الحرية والمسؤولية" تمنح الموظفين حرية اتخاذ القرار دون موافقات متعددة.', icon: '🎬' }
+        ];
+
+        const examplesGrid = document.getElementById('examplesGrid');
+        const exampleTypeFilters = document.getElementById('exampleTypeFilters');
+        const exampleSystemFilters = document.getElementById('exampleSystemFilters');
+
+        let currentTypeFilter = 'all';
+        let currentSystemFilter = 'all';
+
+        function renderExamples() {
+            if (!examplesGrid) return;
+            examplesGrid.innerHTML = '';
+            const filteredExamples = examplesData.filter(ex => {
+                const typeMatch = currentTypeFilter === 'all' || ex.type === currentTypeFilter;
+                const systemMatch = currentSystemFilter === 'all' || ex.system === currentSystemFilter;
+                return typeMatch && systemMatch;
+            });
+
+            if (filteredExamples.length === 0) {
+                examplesGrid.innerHTML = `<p class="col-span-full text-center text-gray-500">لا توجد أمثلة تطابق معايير البحث الحالية.</p>`;
+                return;
+            }
+
+            filteredExamples.forEach(ex => {
+                const card = `
+                    <div class="card transform hover:scale-105">
+                        <h4 class="text-lg font-semibold mb-2 text-gray-800 flex items-center">
+                            <span class="text-2xl mr-2 rtl:ml-2 rtl:mr-0">${ex.icon || (ex.type === 'state' ? '🏛️' : '🏢')}</span>
+                            ${ex.name}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">${ex.description}</p>
+                        <span class="text-xs font-semibold py-1 px-2 rounded-full ${ex.system === 'centralized' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}">
+                            ${ex.system === 'centralized' ? 'نظام مركزي' : 'نظام لامركزي'}
+                        </span>
+                         <span class="text-xs font-semibold py-1 px-2 rounded-full ml-1 rtl:mr-1 rtl:ml-0 ${ex.type === 'state' ? 'bg-purple-100 text-purple-700' : 'bg-yellow-100 text-yellow-700'}">
+                            ${ex.type === 'state' ? 'دولة' : 'مؤسسة'}
+                        </span>
+                    </div>
+                `;
+                examplesGrid.innerHTML += card;
+            });
+        }
+
+        function setupFilters(filterContainer, filterTypeVariable) {
+            if (!filterContainer) return;
+            filterContainer.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const filterValue = e.target.dataset.filterValue;
+                    if (filterTypeVariable === 'type') {
+                        currentTypeFilter = filterValue;
+                    } else if (filterTypeVariable === 'system') {
+                        currentSystemFilter = filterValue;
+                    }
+                    
+                    // Update active button style
+                    filterContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    renderExamples();
+                }
+            });
+        }
+        
+        setupFilters(exampleTypeFilters, 'type');
+        setupFilters(exampleSystemFilters, 'system');
+
+        // Initial render of examples
+        renderExamples();
+
+    </script>
+</body>
+</html>
